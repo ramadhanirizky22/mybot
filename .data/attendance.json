@@ -1,0 +1,12 @@
+{
+  "2e28ed7b-8931-4e4c-a848-46e85a87fc4c_2026-09-27": {
+    "userId": "2e28ed7b-8931-4e4c-a848-46e85a87fc4c",
+    "chatId": 1224097085,
+    "date": "2026-09-27",
+    "status": "CONFIRMED",
+    "confirmedAt": "2026-09-26T22:18:16.760Z",
+    "lastNagAt": "2026-09-26T22:16:35.648Z",
+    "nagCount": 1,
+    "isTestMode": false
+  }
+}

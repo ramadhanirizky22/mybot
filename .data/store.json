@@ -1,0 +1,32 @@
+{
+  "profiles": [
+    {
+      "id": "user-default-1",
+      "telegram_chat_id": 1224097085,
+      "telegram_username": "Rkyy22",
+      "binding_token": "BIND-D9J9OJ",
+      "full_name": "Pengguna TeleSpend"
+    }
+  ],
+  "transactions": [],
+  "bindingTokens": {
+    "BIND-DEMO": "user-default-1",
+    "BIND-OFG03V": "user-default-1",
+    "BIND-IA9CDD": "user-default-1",
+    "BIND-0KMZSV": "user-default-1",
+    "BIND-94G4NN": "user-default-1",
+    "BIND-DIZM2O": "user-default-1",
+    "BIND-GTXE64": "user-default-1",
+    "BIND-9CEM01": "user-default-1",
+    "BIND-W66OWZ": "user-default-1",
+    "BIND-TGVGEH": "user-default-1",
+    "BIND-66UZKX": "user-default-1",
+    "BIND-N0Q01G": "user-default-1",
+    "BIND-OZCWK1": "user-default-1",
+    "BIND-TXV8BH": "user-default-1",
+    "BIND-LUOCJV": "user-default-1",
+    "BIND-QPA0PI": "user-default-1",
+    "BIND-27LX1H": "user-default-1",
+    "BIND-D9J9OJ": "user-default-1"
+  }
+}
