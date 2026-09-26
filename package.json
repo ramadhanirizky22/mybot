@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "bot:dev": "npx tsx --env-file=.env.local scripts/start-bot-polling.ts",
+    "bot:set-webhook": "npx tsx --env-file=.env.local scripts/set-webhook.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

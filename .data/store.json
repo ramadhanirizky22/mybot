@@ -4,7 +4,7 @@
       "id": "user-default-1",
       "telegram_chat_id": 1224097085,
       "telegram_username": "Rkyy22",
-      "binding_token": "BIND-D9J9OJ",
+      "binding_token": "BIND-IGVLZF",
       "full_name": "Pengguna TeleSpend"
     }
   ],
@@ -27,6 +27,8 @@
     "BIND-LUOCJV": "user-default-1",
     "BIND-QPA0PI": "user-default-1",
     "BIND-27LX1H": "user-default-1",
-    "BIND-D9J9OJ": "user-default-1"
+    "BIND-D9J9OJ": "user-default-1",
+    "BIND-V43PZ5": "user-default-1",
+    "BIND-IGVLZF": "user-default-1"
   }
 }
