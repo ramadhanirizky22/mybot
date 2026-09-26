@@ -4,7 +4,7 @@ import { getOrCreateProfileByChatId } from '../bot-profile.service';
 import { parseTransactionText } from '../parsers/transaction.parser';
 import { performReceiptOcr } from '../parsers/ocr.service';
 import { createCategoryKeyboard, createUndoKeyboard } from '../keyboards/category.keyboard';
-import { attendanceService } from '@/modules/attendance/attendance.service';
+import { attendanceService, createAttendanceKeyboard } from '@/modules/attendance/attendance.service';
 import { formatIDR } from '@/lib/utils';
 import { env } from '@/config/env';
 
@@ -296,6 +296,59 @@ export async function handleCallbackQuery(ctx: Context) {
       `🛑 *Pengingat 5 menitan telah dimatikan.*\n\n` +
       `_Status: Absensi hari ini sudah tercatat. Pengingat tidak akan dikirimkan lagi._ 💤`,
       { parse_mode: 'Markdown' }
+    );
+    return;
+  }
+
+  // Handle Setting schedule preset: absen:set:<deadlineH>:<deadlineM>:<reminderH>:<reminderM>
+  if (data.startsWith('absen:set:')) {
+    const parts = data.split(':');
+    const deadline = `${parts[2]}:${parts[3]}`;
+    const reminder = `${parts[4]}:${parts[5]}`;
+    const chatId = ctx.from?.id;
+    const username = ctx.from?.username || ctx.from?.first_name || 'Pengguna';
+    if (!chatId) return;
+
+    const profile = await getOrCreateProfileByChatId(chatId, username);
+    if (!profile) return;
+
+    const updated = attendanceService.updateUserSetting(profile.id, chatId, deadline, reminder);
+
+    await ctx.answerCallbackQuery({ text: `✅ Jadwal diatur: Masuk ${updated.deadlineTime}` });
+
+    await ctx.editMessageText(
+      `✅ *Jadwal Pengingat Absen Berhasil Diatur!*\n\n` +
+      `🏢 *Batas Jam Masuk Kantor:* *${updated.deadlineTime} WIB*\n` +
+      `🔔 *Pengingat Awal (H-1 Jam):* *${updated.reminderTime} WIB*\n` +
+      `🔄 *Jeda Notifikasi:* Setiap *5 menit* sampai Anda konfirmasi sudah absen.\n\n` +
+      `_Bot akan aktif mengingatkan Anda pada jam ${updated.reminderTime} WIB._`,
+      { parse_mode: 'Markdown' }
+    );
+    return;
+  }
+
+  // Handle test trigger button: absen:test
+  if (data === 'absen:test') {
+    const chatId = ctx.from?.id;
+    const username = ctx.from?.username || ctx.from?.first_name || 'Pengguna';
+    if (!chatId) return;
+
+    const profile = await getOrCreateProfileByChatId(chatId, username);
+    if (!profile) return;
+
+    attendanceService.triggerTestReminder(profile.id, chatId);
+
+    await ctx.answerCallbackQuery({ text: '🧪 Uji coba pengingat aktif!' });
+
+    await ctx.editMessageText(
+      `🧪 *Mode Uji Coba Pengingat Absen Aktif!*\n\n` +
+      `Bot sedang menjalankan simulasi pengingat.\n` +
+      `Bot akan mengingatkan Anda setiap *5 menit* sampai Anda konfirmasi sudah absen.\n\n` +
+      `_Silakan balas dengan pesan:_\n👉 \`saya sudah absen\``,
+      {
+        parse_mode: 'Markdown',
+        reply_markup: createAttendanceKeyboard(),
+      }
     );
     return;
   }

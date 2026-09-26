@@ -1,0 +1,10 @@
+{
+  "2e28ed7b-8931-4e4c-a848-46e85a87fc4c": {
+    "userId": "2e28ed7b-8931-4e4c-a848-46e85a87fc4c",
+    "chatId": 1224097085,
+    "deadlineTime": "08:00",
+    "reminderTime": "07:00",
+    "nagIntervalMinutes": 5,
+    "isActive": true
+  }
+}
