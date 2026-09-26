@@ -29,7 +29,7 @@ export default async function SettingsPage() {
   return (
     <SettingsView
       profile={profile}
-      botUsername={env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || 'money_riki_bot'}
+      botUsername={env.TELEGRAM_BOT_USERNAME || 'money_riki_bot'}
     />
   );
 }

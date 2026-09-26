@@ -8,8 +8,8 @@ export async function generateBindingTokenAction() {
   const token = 'BIND-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
   const isSupabaseLive =
-    env.NEXT_PUBLIC_SUPABASE_URL &&
-    !env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
+    env.SUPABASE_URL &&
+    !env.SUPABASE_URL.includes('placeholder') &&
     env.SUPABASE_SERVICE_ROLE_KEY &&
     !env.SUPABASE_SERVICE_ROLE_KEY.includes('placeholder');
 
