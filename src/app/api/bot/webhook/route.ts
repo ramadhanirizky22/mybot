@@ -4,6 +4,7 @@ import { env } from "@/config/env";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,7 +36,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error: any) {
     console.error("[Telegram Webhook Error]:", error);
-    return NextResponse.json({ error: error?.message || "Internal processing error" }, { status: 500 });
+    // Return status 200 to acknowledge Telegram update and avoid endless retries
+    return NextResponse.json({ ok: false, error: error?.message || "Internal processing error" }, { status: 200 });
   }
 }
 

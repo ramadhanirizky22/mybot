@@ -200,23 +200,28 @@ export async function handlePhotoMessage(ctx: Context) {
     if (!finalAmount || finalAmount <= 0) {
       await ctx.api.deleteMessage(chatId, statusMsg.message_id).catch(() => {});
       return ctx.reply(
-        `⚠️ Tidak berhasil mendeteksi nominal transaksi dari foto ini.\n\n💡 _Tips: Pastikan foto struk terang, tidak buram, atau ketik langsung di caption (misal: \`transfer masuk 250k\`)._`,
+        `⚠️ *Tidak berhasil mendeteksi nominal transaksi dari foto ini.*\n\n` +
+        (ocr.merchant ? `📌 *Terdeteksi:* ${ocr.merchant}\n\n` : '') +
+        `💡 _Tips:_ Pastikan foto struk terang, atau ketik langsung nominalnya:\n` +
+        `Contoh: \`28000 MP-TOKO SULTHAN\` atau kirim foto disertai caption \`28000\`.`,
         { parse_mode: 'Markdown' }
       );
     }
 
     // 4. Determine category
-    let catSearch = 'Lainnya';
-    if (!finalIsExpense) {
-      catSearch = 'Investasi & Tabungan';
-    } else if (/kopi|cafe|coffee|resto|makan|food|mie|bakso|burger|tea/i.test(finalItem)) {
-      catSearch = 'Makanan & Minuman';
-    } else if (/spbu|pertamina|shell|gojek|grab|taxi|bensin/i.test(finalItem)) {
-      catSearch = 'Transportasi';
-    } else if (/pln|listrik|pdam|wifi|indihome|bpjs|tagihan/i.test(finalItem)) {
-      catSearch = 'Tagihan & Utilitas';
-    } else if (/toko|mart|indomaret|alfamart|supermarket/i.test(finalItem)) {
-      catSearch = 'Belanja';
+    let catSearch = ocr.suggestedCategory || 'Lainnya';
+    if (!ocr.suggestedCategory) {
+      if (!finalIsExpense) {
+        catSearch = 'Investasi & Tabungan';
+      } else if (/kopi|cafe|coffee|resto|makan|food|mie|bakso|burger|tea/i.test(finalItem)) {
+        catSearch = 'Makanan & Minuman';
+      } else if (/spbu|pertamina|shell|gojek|grab|taxi|bensin/i.test(finalItem)) {
+        catSearch = 'Transportasi';
+      } else if (/pln|listrik|pdam|wifi|indihome|bpjs|tagihan/i.test(finalItem)) {
+        catSearch = 'Tagihan & Utilitas';
+      } else if (/toko|mart|indomaret|alfamart|supermarket/i.test(finalItem)) {
+        catSearch = 'Belanja';
+      }
     }
 
     const { data: cat } = await supabaseAdmin
@@ -261,10 +266,13 @@ _Gunakan tombol di bawah untuk ubah jenis, ganti kategori, atau batalkan:_`,
         reply_markup: newTx ? createCategoryKeyboard(newTx.id, finalIsExpense) : undefined,
       }
     );
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error handling receipt photo:', err);
     await ctx.api.deleteMessage(chatId, statusMsg.message_id).catch(() => {});
-    return ctx.reply('⚠️ Terjadi kendala saat membaca struk. Silakan coba kirim ulang foto struk.');
+    return ctx.reply(
+      `⚠️ *Terjadi kendala saat membaca struk.*\n\n💡 _Tips:_ Silakan ketik langsung secara manual, contoh: \`28000 MP-TOKO SULTHAN\``,
+      { parse_mode: 'Markdown' }
+    );
   }
 }
 
