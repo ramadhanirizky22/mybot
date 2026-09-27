@@ -60,3 +60,17 @@ _Gunakan /budget untuk melihat batas kuota anggaran._`,
     { parse_mode: 'Markdown' }
   );
 }
+
+export async function handleTesRekapCommand(ctx: CommandContext<Context>) {
+  const chatId = ctx.from?.id;
+  const username = ctx.from?.username || ctx.from?.first_name || 'Pengguna';
+  if (!chatId) return;
+
+  const profile = await getOrCreateProfileByChatId(chatId, username);
+  if (!profile) {
+    return ctx.reply('⚠️ Tidak dapat memuat profil pengguna.');
+  }
+
+  const { sendDailyRecapToUser } = await import('@/modules/recap/daily-recap.service');
+  await sendDailyRecapToUser(ctx, profile.id, chatId, profile.full_name || username);
+}

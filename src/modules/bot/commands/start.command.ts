@@ -44,9 +44,11 @@ Cukup ketik pesan singkat, contoh:
 
 📱 *Daftar Perintah:*
 • /rekap — Rekap pengeluaran hari ini, minggu ini, & bulan ini
+• /tesrekap — Simulasi rekap malam otomatis (21:00 WIB)
 • /budget — Pantau kuota anggaran kategori
 • /split [nominal] [orang] [ket] — Hitung patungan / split bill
 • /absen — Cek status absensi harian & pengingat
+• /setabsen — Atur jam masuk kantor (default 08:00)
 • /tesabsen — Uji coba loop pengingat absen 5 menitan
 • /undo — Batalkan transaksi terakhir`,
         { parse_mode: 'Markdown' }
@@ -70,9 +72,11 @@ Ketik langsung pesan pengeluaran Anda, contoh:
 
 📱 *Daftar Perintah:*
 • /rekap — Rekap pengeluaran hari ini, minggu ini, & bulan ini
+• /tesrekap — Simulasi rekap malam otomatis (21:00 WIB)
 • /budget — Pantau kuota anggaran kategori
 • /split [nominal] [orang] [ket] — Hitung patungan / split bill
 • /absen — Cek status absensi harian & pengingat
+• /setabsen — Atur jam masuk kantor (default 08:00)
 • /tesabsen — Uji coba loop pengingat absen 5 menitan
 • /undo — Batalkan transaksi terakhir`,
     { parse_mode: 'Markdown' }

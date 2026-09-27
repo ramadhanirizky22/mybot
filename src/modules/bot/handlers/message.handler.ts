@@ -353,6 +353,21 @@ export async function handleCallbackQuery(ctx: Context) {
     return;
   }
 
+  // Handle Rekap refresh button: rekap:refresh
+  if (data === 'rekap:refresh') {
+    const chatId = ctx.from?.id;
+    const username = ctx.from?.username || ctx.from?.first_name || 'Pengguna';
+    if (!chatId) return;
+
+    await ctx.answerCallbackQuery({ text: 'Memperbarui rekap...' });
+    const profile = await getOrCreateProfileByChatId(chatId, username);
+    if (profile) {
+      const { sendDailyRecapToUser } = await import('@/modules/recap/daily-recap.service');
+      await sendDailyRecapToUser(ctx, profile.id, chatId, profile.full_name || username);
+    }
+    return;
+  }
+
   // Handle Undo: undo:<txId>
   if (data.startsWith('undo:')) {
     const txId = data.replace('undo:', '');

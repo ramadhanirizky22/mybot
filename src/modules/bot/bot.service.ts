@@ -1,6 +1,6 @@
 import { Bot } from 'grammy';
 import { handleStartCommand } from './commands/start.command';
-import { handleRekapCommand } from './commands/rekap.command';
+import { handleRekapCommand, handleTesRekapCommand } from './commands/rekap.command';
 import { handleBudgetCommand } from './commands/budget.command';
 import { handleSplitCommand } from './commands/split.command';
 import { handleUndoCommand } from './commands/undo.command';
@@ -15,6 +15,7 @@ export function setupBotHandlers(bot: Bot) {
   // Command Handlers
   bot.command('start', handleStartCommand);
   bot.command('rekap', handleRekapCommand);
+  bot.command('tesrekap', handleTesRekapCommand);
   bot.command('budget', handleBudgetCommand);
   bot.command('split', handleSplitCommand);
   bot.command('undo', handleUndoCommand);
