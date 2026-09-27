@@ -254,9 +254,54 @@ async function performTesseractOcr(imageBuffer: Buffer): Promise<OcrReceiptResul
 }
 
 /**
+ * Runs free OCR.Space API as a fast cloud fallback (takes ~1-2 seconds, zero serverless CPU overhead).
+ */
+async function performOcrSpace(imageBuffer: Buffer): Promise<OcrReceiptResult | null> {
+  const apiKey = env.OCR_SPACE_API_KEY || 'K87899142388957';
+
+  try {
+    const formData = new FormData();
+    const blob = new Blob([new Uint8Array(imageBuffer)], { type: 'image/jpeg' });
+    formData.append('file', blob, 'receipt.jpg');
+    formData.append('apikey', apiKey);
+    formData.append('language', 'eng');
+    formData.append('isOverlayRequired', 'false');
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    const res = await fetch('https://api.ocr.space/parse/image', {
+      method: 'POST',
+      body: formData,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    const rawText = data?.ParsedResults?.[0]?.ParsedText || '';
+    if (!rawText || rawText.trim().length === 0) return null;
+
+    console.log('[OCR.Space] Extracted text length:', rawText.length);
+    const { amount, merchant, isExpense } = parseReceiptText(rawText);
+    if (!amount || amount <= 0) return null;
+
+    return {
+      amount,
+      merchant,
+      isExpense,
+      rawText,
+    };
+  } catch (err) {
+    console.warn('[OCR.Space] Failed or timed out:', err);
+    return null;
+  }
+}
+
+/**
  * Downloads image buffer from Telegram and extracts receipt details.
  * Prioritizes Gemini Vision AI (if configured) for 1-2s response & 99% accuracy,
- * with graceful fallback to optimized Tesseract OCR.
+ * followed by OCR.Space cloud API, and finally local Tesseract OCR.
  */
 export async function performReceiptOcr(fileUrl: string): Promise<OcrReceiptResult> {
   try {
@@ -267,7 +312,7 @@ export async function performReceiptOcr(fileUrl: string): Promise<OcrReceiptResu
     const arrayBuffer = await response.arrayBuffer();
     const imageBuffer = Buffer.from(arrayBuffer);
 
-    // 1. Try Gemini Vision first if GEMINI_API_KEY is configured
+    // 1. Try Gemini Vision first if GEMINI_API_KEY is configured (Free & Best)
     if (env.GEMINI_API_KEY) {
       const geminiResult = await performGeminiOcr(imageBuffer);
       if (geminiResult && geminiResult.amount > 0) {
@@ -275,7 +320,13 @@ export async function performReceiptOcr(fileUrl: string): Promise<OcrReceiptResu
       }
     }
 
-    // 2. Fallback to Tesseract OCR
+    // 2. Try fast cloud OCR (OCR.Space - Free, fast 1-2s, no serverless CPU bottleneck)
+    const ocrSpaceResult = await performOcrSpace(imageBuffer);
+    if (ocrSpaceResult && ocrSpaceResult.amount > 0) {
+      return ocrSpaceResult;
+    }
+
+    // 3. Fallback to local Tesseract OCR
     return await performTesseractOcr(imageBuffer);
   } catch (error) {
     console.error('Receipt OCR handler error:', error);

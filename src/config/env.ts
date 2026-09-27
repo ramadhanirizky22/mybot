@@ -30,6 +30,7 @@ const envSchema = z.object({
     .string()
     .default("money_riki_bot"),
   GEMINI_API_KEY: z.string().optional(),
+  OCR_SPACE_API_KEY: z.string().optional(),
 });
 
 export const env = envSchema.parse({
@@ -42,4 +43,5 @@ export const env = envSchema.parse({
   APP_URL: process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || undefined,
   TELEGRAM_BOT_USERNAME: process.env.TELEGRAM_BOT_USERNAME || process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || undefined,
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || undefined,
+  OCR_SPACE_API_KEY: process.env.OCR_SPACE_API_KEY || undefined,
 });
