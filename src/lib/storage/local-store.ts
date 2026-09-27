@@ -30,7 +30,9 @@ interface LocalStoreData {
   bindingTokens: Record<string, string>; // token -> profileId
 }
 
-const DATA_DIR = path.resolve(process.cwd(), '.data');
+const DATA_DIR = process.env.VERCEL || process.env.NODE_ENV === 'production'
+  ? path.join('/tmp', '.data')
+  : path.resolve(process.cwd(), '.data');
 const DATA_FILE = path.join(DATA_DIR, 'store.json');
 
 function ensureDataFile(): LocalStoreData {

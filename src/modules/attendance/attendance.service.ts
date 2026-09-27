@@ -23,8 +23,12 @@ export interface AttendanceSetting {
   isActive: boolean;
 }
 
-const DATA_FILE = path.resolve(process.cwd(), '.data/attendance.json');
-const SETTINGS_FILE = path.resolve(process.cwd(), '.data/attendance_settings.json');
+const BASE_DATA_DIR = process.env.VERCEL || process.env.NODE_ENV === 'production'
+  ? path.join('/tmp', '.data')
+  : path.resolve(process.cwd(), '.data');
+
+const DATA_FILE = path.join(BASE_DATA_DIR, 'attendance.json');
+const SETTINGS_FILE = path.join(BASE_DATA_DIR, 'attendance_settings.json');
 
 function getWibDate(): { dateStr: string; hours: number; minutes: number; now: Date } {
   // WIB is UTC+7

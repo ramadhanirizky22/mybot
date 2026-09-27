@@ -3,6 +3,8 @@ import { bot } from "@/lib/telegram";
 import { env } from "@/config/env";
 import crypto from "crypto";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     const secretHeader = req.headers.get("x-telegram-bot-api-secret-token") || "";
@@ -17,18 +19,23 @@ export async function POST(req: NextRequest) {
       );
 
     if (!isValidSecret) {
+      console.warn("[Telegram Webhook] Unauthorized access attempt: secret token mismatch");
       return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
     }
 
     const update = await req.json();
-    
-    // Process update asynchronously to maintain response time budget < 1500ms
+
+    if (!bot.isInited()) {
+      await bot.init();
+    }
+
+    // Process update with bot
     await bot.handleUpdate(update);
 
     return NextResponse.json({ ok: true }, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("[Telegram Webhook Error]:", error);
-    return NextResponse.json({ error: "Internal processing error" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Internal processing error" }, { status: 500 });
   }
 }
 
