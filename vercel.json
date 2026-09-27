@@ -1,12 +1,12 @@
 {
   "crons": [
     {
-      "path": "/api/cron/attendance-reminder",
-      "schedule": "*/5 * * * *"
-    },
-    {
       "path": "/api/cron/subscription-alert",
       "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/attendance-reminder",
+      "schedule": "0 16 * * *"
     }
   ]
 }
